@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,14 +20,21 @@ namespace MycoMatrix.Controllers
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Mushroom>>> Get(string commonName, string genus, string species, string gillType, int toxicityLevel, int page = 0)
+    public async Task<ActionResult<IEnumerable<Mushroom>>> Get(string editor, string commonName, string genus, string species, string gillType, [Range(0, 10)] int toxicityLevel, [Range(1, int.MaxValue)] int page = 1, [Range(1, 30)] int pageSize = 4)
     {
+      if(!ModelState.IsValid)
+      {
+        return BadRequest();
+      }
       IQueryable<Mushroom> query = _db.Mushrooms.OrderBy(m => m.MushroomId).AsQueryable();
       if (commonName != null)
       {
-        query = query.Where(e => e.CommonName == commonName);
+        query = query.Where(e => e.CommonName.Contains(commonName));
       }
-
+      if (editor != null)
+      {
+        query = query.Where(e => e.Editor.Contains(editor));
+      }
       if (genus != null)
       {
         query = query.Where(e => e.Genus == genus);
@@ -41,12 +50,12 @@ namespace MycoMatrix.Controllers
         query = query.Where(e => e.GillType == gillType);
       }
 
-      if (toxicityLevel > 5)
+      if (toxicityLevel > -1)
       {
         query = query.Where(e => e.ToxicityLevel >= toxicityLevel);
       }
 
-      return await query.Skip(4 * page).Take(4).ToListAsync();
+      return await query.Skip(pageSize * (page - 1)).Take(pageSize).ToListAsync();
     }
 
 

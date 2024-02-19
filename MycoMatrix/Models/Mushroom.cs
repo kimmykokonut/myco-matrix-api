@@ -25,4 +25,6 @@ public class Mushroom
   [Range(0, 10, ErrorMessage = "Toxicity levels range 0-10")]
   public int ToxicityLevel { get; set; }
   public string Notes { get; set; }
+  [StringLength(45)]
+  public string Editor { get; set; }
 }
