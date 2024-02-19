@@ -18,32 +18,35 @@ namespace MycoMatrix.Controllers
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Mushroom>>> Get(string commonName, string genus, string species, string gillType, int toxicityLevel)
+    public async Task<ActionResult<IEnumerable<Mushroom>>> Get(string commonName, string genus, string species, string gillType, int toxicityLevel, int page = 0)
     {
-      IQueryable<Mushroom> query = _db.Mushrooms.AsQueryable();
-      if(commonName != null)
+      IQueryable<Mushroom> query = _db.Mushrooms.OrderBy(m => m.MushroomId).AsQueryable();
+      if (commonName != null)
       {
         query = query.Where(e => e.CommonName == commonName);
       }
 
-      if (genus != null) {
+      if (genus != null)
+      {
         query = query.Where(e => e.Genus == genus);
       }
 
-      if(species != null) {
+      if (species != null)
+      {
         query = query.Where(e => e.Species == species);
       }
 
-      if(gillType != null) {
+      if (gillType != null)
+      {
         query = query.Where(e => e.GillType == gillType);
       }
 
-      if(toxicityLevel > 5)
+      if (toxicityLevel > 5)
       {
         query = query.Where(e => e.ToxicityLevel >= toxicityLevel);
       }
-      
-      return await query.ToListAsync();
+
+      return await query.Skip(4 * page).Take(4).ToListAsync();
     }
 
 
@@ -89,7 +92,7 @@ namespace MycoMatrix.Controllers
         return BadRequest();
       }
       _db.Mushrooms.Update(m);
-      
+
       try
       {
         await _db.SaveChangesAsync();
@@ -112,29 +115,51 @@ namespace MycoMatrix.Controllers
       return _db.Mushrooms.Any(e => e.MushroomId == id);
     }
 
-    // [HttpPatch("{id}")]
-    // public async Task<IActionResult> JsonPatchWithModelState(
-    //   [FromBody] JsonPatchDocument<Mushroom> patchDoc)
-    // {
-    //   if (patchDoc != null)
-    //   {
-    //     Mushroom m = await _db.Mushrooms.FindAsync();
+    [HttpPatch("{id}")]
+    [ProducesResponseType(typeof(Mushroom), 200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> JsonPatchWithModelState(int id,
+      [FromBody] JsonPatchDocument<Mushroom> patchDoc)
+    {
+      if (patchDoc != null)
+      {
+        Mushroom m = await _db.Mushrooms.FindAsync(id);
 
-    //     patchDoc.ApplyTo(m, ModelState);
+        if (m == null)
+        {
+          return NotFound();
+        }
 
-    //     if(!ModelState.IsValid)
-    //     {
-    //       return BadRequest(ModelState);
-    //     }
+        patchDoc.ApplyTo(m, ModelState);
 
-    //     return new ObjectResult(m);
-    //   }
-    //   else
-    //   {
-    //     return BadRequest(ModelState);
-    //   }
-    // }
-    
+        if (!ModelState.IsValid)
+        {
+          return BadRequest(ModelState);
+        }
+
+        try
+        {
+          await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+          if (!MushroomExists(id))
+          {
+            return NotFound();
+          }
+          else
+          {
+            throw;
+          }
+        }
+        return Ok(m);
+      }
+      else
+      {
+        return BadRequest(ModelState);
+      }
+    }
   }
 
 }
