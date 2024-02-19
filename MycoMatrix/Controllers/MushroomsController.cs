@@ -20,7 +20,16 @@ namespace MycoMatrix.Controllers
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Mushroom>>> Get(string editor, string commonName, string genus, string species, string gillType, [Range(0, 10)] int toxicityLevel, [Range(1, int.MaxValue)] int page = 1, [Range(1, 30)] int pageSize = 4)
+    public async Task<ActionResult<IEnumerable<Mushroom>>> Get(
+    string editor, 
+    string commonName, 
+    string genus, 
+    string species, 
+    string gillType, 
+    [Range(0, 10)] int toxicityLevel, 
+    [Range(1, int.MaxValue)] int page = 1, 
+    [Range(1, 30)] int pageSize = 4)
+    
     {
       if(!ModelState.IsValid)
       {
@@ -80,25 +89,33 @@ namespace MycoMatrix.Controllers
 
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteMushroom(int id)
+    public async Task<IActionResult> DeleteMushroom(int id, string editor)
     {
       Mushroom m = await _db.Mushrooms.FindAsync(id);
       if (m == null)
       {
         return NotFound();
       }
+      if (editor != m.Editor)
+      {
+        return Unauthorized();
+      }
+      
       _db.Mushrooms.Remove(m);
       await _db.SaveChangesAsync();
 
       return NoContent();
-
     }
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, Mushroom m)
+    public async Task<IActionResult> Put(int id, Mushroom m, string editor)
     {
       if (id != m.MushroomId)
       {
         return BadRequest();
+      }
+      if (editor != m.Editor)
+      {
+        return Unauthorized();
       }
       _db.Mushrooms.Update(m);
 
@@ -129,7 +146,7 @@ namespace MycoMatrix.Controllers
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> JsonPatchWithModelState(int id,
-      [FromBody] JsonPatchDocument<Mushroom> patchDoc)
+      [FromBody] JsonPatchDocument<Mushroom> patchDoc, string editor)
     {
       if (patchDoc != null)
       {
@@ -138,6 +155,11 @@ namespace MycoMatrix.Controllers
         if (m == null)
         {
           return NotFound();
+        }
+        
+        if (editor != m.Editor)
+        {
+          return Unauthorized();
         }
 
         patchDoc.ApplyTo(m, ModelState);
