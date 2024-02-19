@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MycoMatrix.Models;
@@ -17,10 +18,34 @@ namespace MycoMatrix.Controllers
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Mushroom>>> Get()
+    public async Task<ActionResult<IEnumerable<Mushroom>>> Get(string commonName, string genus, string species, string gillType, int toxicityLevel)
     {
-      return await _db.Mushrooms.ToListAsync();
+      IQueryable<Mushroom> query = _db.Mushrooms.AsQueryable();
+      if(commonName != null)
+      {
+        query = query.Where(e => e.CommonName == commonName);
+      }
+
+      if (genus != null) {
+        query = query.Where(e => e.Genus == genus);
+      }
+
+      if(species != null) {
+        query = query.Where(e => e.Species == species);
+      }
+
+      if(gillType != null) {
+        query = query.Where(e => e.GillType == gillType);
+      }
+
+      if(toxicityLevel > 5)
+      {
+        query = query.Where(e => e.ToxicityLevel >= toxicityLevel);
+      }
+      
+      return await query.ToListAsync();
     }
+
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Mushroom>> GetMushroom(int id)
@@ -87,7 +112,29 @@ namespace MycoMatrix.Controllers
       return _db.Mushrooms.Any(e => e.MushroomId == id);
     }
 
+    // [HttpPatch("{id}")]
+    // public async Task<IActionResult> JsonPatchWithModelState(
+    //   [FromBody] JsonPatchDocument<Mushroom> patchDoc)
+    // {
+    //   if (patchDoc != null)
+    //   {
+    //     Mushroom m = await _db.Mushrooms.FindAsync();
 
+    //     patchDoc.ApplyTo(m, ModelState);
+
+    //     if(!ModelState.IsValid)
+    //     {
+    //       return BadRequest(ModelState);
+    //     }
+
+    //     return new ObjectResult(m);
+    //   }
+    //   else
+    //   {
+    //     return BadRequest(ModelState);
+    //   }
+    // }
+    
   }
 
 }

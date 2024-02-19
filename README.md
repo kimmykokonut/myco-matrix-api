@@ -12,7 +12,7 @@ By Henry Oberholtzer & Kim Robinson
 ## Features
 
 ## Upcoming Changes
-- To be decided!
+- Add Pagination!
 
 ## Setup/Installation Requirements
 
