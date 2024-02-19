@@ -22,6 +22,17 @@ namespace MycoMatrix.Controllers
       return await _db.Mushrooms.ToListAsync();
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Mushroom>> GetMushroom(int id)
+    {
+      Mushroom m = await _db.Mushrooms.FindAsync(id);
+      if (m == null)
+      {
+        return NotFound();
+      }
+      return m;
+    }
+
   }
 
 }
