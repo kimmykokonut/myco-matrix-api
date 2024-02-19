@@ -22,7 +22,7 @@ public class Mushroom
   [StringLength(255)]
   public string ImageURL { get; set; }
 
-  [Range(0, 10)]
+  [Range(0, 10, ErrorMessage = "Toxicity levels range 0-10")]
   public int ToxicityLevel { get; set; }
   public string Notes { get; set; }
 }
