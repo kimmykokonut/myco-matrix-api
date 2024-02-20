@@ -14,12 +14,12 @@ By Henry Oberholtzer & Kim Robinson
 - user can read and create, but can only edit/delete objects if they are the listed editor
 - GET all includes query parameters, some are keyword enabled (not exact match)
 - Pagination included in GET (all) request
+- JWT Token added for authentication (user can register and sign in for token, use Bearer token to call API)
+- Version 1 & 2 set up.
 
 ## Upcoming Changes
 * Object within object?
 * API key
-* JWT token
-* versioning- set up for v1 but would like to default to v1 unless specified. right now required to type in v1 for requests.
 
 ## Setup/Installation Requirements
 
