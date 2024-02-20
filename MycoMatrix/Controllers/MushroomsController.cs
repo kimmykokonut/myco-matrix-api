@@ -8,8 +8,10 @@ using MycoMatrix.Models;
 namespace MycoMatrix.Controllers
 {
   [ApiController]
-  [Route("api/v{version:apiVersion}/[controller]")]
   [ApiVersion("1.0")]
+  //[ApiVersion("2.0")]
+  [Route("api/v{version:apiVersion}/[controller]")]
+
   public class MushroomsController : ControllerBase
   {
     private readonly MycoMatrixContext _db;
@@ -18,20 +20,67 @@ namespace MycoMatrix.Controllers
     {
       _db = db;
     }
-
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Mushroom>>> Get(
-    string editor, 
-    string commonName, 
-    string genus, 
-    string species, 
-    string gillType, 
-    [Range(0, 10)] int toxicityLevel, 
-    [Range(1, int.MaxValue)] int page = 1, 
+    string editor,
+    string commonName,
+    string genus,
+    string species,
+    string gillType,
+    [Range(0, 10)] int toxicityLevel,
+    [Range(1, int.MaxValue)] int page = 1,
     [Range(1, 30)] int pageSize = 4)
-    
     {
-      if(!ModelState.IsValid)
+      if (!ModelState.IsValid)
+      {
+        return BadRequest();
+      }
+      IQueryable<Mushroom> query = _db.Mushrooms.OrderBy(m => m.MushroomId).AsQueryable();
+      if (commonName != null)
+      {
+        query = query.Where(e => e.CommonName.Contains(commonName));
+      }
+      if (editor != null)
+      {
+        query = query.Where(e => e.Editor.Contains(editor));
+      }
+      if (genus != null)
+      {
+        query = query.Where(e => e.Genus == genus);
+      }
+
+      if (species != null)
+      {
+        query = query.Where(e => e.Species == species);
+      }
+
+      if (gillType != null)
+      {
+        query = query.Where(e => e.GillType == gillType);
+      }
+
+      if (toxicityLevel > -1)
+      {
+        query = query.Where(e => e.ToxicityLevel >= toxicityLevel);
+      }
+
+      return await query.Skip(pageSize * (page - 1)).Take(pageSize).ToListAsync();
+    }
+
+    [ApiVersion("2.0")]
+    [HttpGet] //V2 test.
+    public async Task<ActionResult<IEnumerable<Mushroom>>> GetV2(
+        string editor,
+        string commonName,
+        string genus,
+        string species,
+        string gillType,
+        [Range(0, 10)] int toxicityLevel,
+        [Range(1, int.MaxValue)] int page = 1,
+        [Range(1, 30)] int pageSize = 4)
+
+    {
+      if (!ModelState.IsValid)
       {
         return BadRequest();
       }
@@ -100,7 +149,7 @@ namespace MycoMatrix.Controllers
       {
         return Unauthorized();
       }
-      
+
       _db.Mushrooms.Remove(m);
       await _db.SaveChangesAsync();
 
@@ -156,7 +205,7 @@ namespace MycoMatrix.Controllers
         {
           return NotFound();
         }
-        
+
         if (editor != m.Editor)
         {
           return Unauthorized();
