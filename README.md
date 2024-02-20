@@ -10,9 +10,16 @@ By Henry Oberholtzer & Kim Robinson
 - Swagger/OpenAPI
 
 ## Features
+- user can access API with GET (all), GET (by id), POST, DELETE (by id), PUT and PATCH (by id)
+- user can read and create, but can only edit/delete objects if they are the listed editor
+- GET all includes query parameters, some are keyword enabled (not exact match)
+- Pagination included in GET (all) request
 
 ## Upcoming Changes
-- Add Pagination!
+* Object within object?
+* API key
+* JWT token
+* versioning- set up for v1 but would like to default to v1 unless specified. right now required to type in v1 for requests.
 
 ## Setup/Installation Requirements
 
@@ -48,72 +55,8 @@ By Henry Oberholtzer & Kim Robinson
 
 # API Documentation
 
-### Endpoints
-```
-GET http://localhost:5000/api/myco/
-GET http://localhost:5000/api/animals/{id}
-POST http://localhost:5000/api/animals/
-PUT http://localhost:5000/api/animals/{id}
-DELETE http://localhost:5000/api/animals/{id}
-```
-
-### GET Requests
-
-#### Optional GET Parameters
-| Parameter   | Type        |  Required    | Description |
-| ----------- | ----------- | -----------  | ----------- |
-| species     | String      | not required | Returns animals with a matching species value |
-| name        | String      | not required | Returns animals with a matching name value |
-| minimumAge  | Number      | not required | Returns animals that have an age value that is greater than or equal to the specified minimumAge value |
-
-##### GET Examples
-
-Returns all animals with a species value of "Stegosaurus":
-```
-GET https://localhost:5000/api/animals?species=stegosaurus
-```
-
-Returns
-
-Returns all animals with the name "Lucy"
-```
-GET https://localhost:5000/api/animals?name=lucy
-```
-Returns all animals of 10 or older
-```
-GET https://localhost:5000/api/animals?minimumAge=10
-```
-Multiple queries can be joined with "&"
-```
-GET http://localhost:5000/api/animals?species=tyrannosaurus&minimumAge=400
-```
-
-### POST Requests
-A body is required for a post request, exemplified by the following:
-```
-{
-  "species": "Tyrannosaurus Rex",
-  "name": "Lucy",
-  "age": 8
-}
-```
-### PUT Requests
-
-A body including the animalId is required, exemplified by the following:
-```
-{
-  "animalId": 14,
-  "species": "Tyrannosaurus Rex",
-  "name": "Lucy",
-  "age": 8
-}
-```
-The PUT request URL corresponds to the animalId of the animal in the body:
-```
-http://localhost:5000/api/animals/14
-```
-
-
+Full CRUD support is provided. Please see the [the documentation]()
+<!-- README thoroughly describes the further exploration topic that's been implemented in the API. -->
 
 ## License
 

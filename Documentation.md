@@ -70,10 +70,7 @@ http://localhost:5000/api/mushrooms/1
 
 Notice that the value of `MushroomId` needs to match the id number in the URL. In this example, they are both 1.
  
-
-Coming Features:
-* PATCH request
-* Pagination
-* Object within object?
-* API key
+* to add
+- patch directions
+- pagination?
 

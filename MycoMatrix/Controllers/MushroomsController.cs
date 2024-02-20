@@ -7,9 +7,9 @@ using MycoMatrix.Models;
 
 namespace MycoMatrix.Controllers
 {
-
-  [Route("api/[controller]")]
   [ApiController]
+  [Route("api/v{version:apiVersion}/[controller]")]
+  [ApiVersion("1.0")]
   public class MushroomsController : ControllerBase
   {
     private readonly MycoMatrixContext _db;
@@ -198,9 +198,6 @@ namespace MycoMatrix.Controllers
       int count = _db.Mushrooms.Count();
       int rnd = new Random().Next(count);
       return await _db.Mushrooms.Skip(rnd).FirstAsync();
-      //(find randomush by id determined by rnd # 1-x of lenght of list..)
-      //Mushroom randoMush = await _db.Mushrooms.FindAsync(rnd);
-      //return randoMush?
     }
   }
 
