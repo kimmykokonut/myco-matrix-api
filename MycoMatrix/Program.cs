@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +35,11 @@ builder.Services.AddApiVersioning(opt =>
                                                                                         new HeaderApiVersionReader("x-api-version"),
                                                                                         new MediaTypeApiVersionReader("x-api-version"));
                                     });
+builder.Services.AddSwaggerGen(c => //add versioning
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "OG", Version = "v1 "});
+    c.ResolveConflictingActions(c => c.Last()); //bc 2 gets, swagger has issue (api is fine), uses default version if conflict.  if 2.0 is default, take last. if 1.0 default, take last.
+});                               
 
 var app = builder.Build();
 
