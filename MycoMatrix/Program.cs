@@ -38,7 +38,7 @@ builder.Services.AddApiVersioning(opt =>
 builder.Services.AddSwaggerGen(c => //add versioning
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "OG", Version = "v1 "});
-    c.ResolveConflictingActions(c => c.Last()); //bc 2 gets, swagger has issue (api is fine), uses default version if conflict.  if 2.0 is default, take last. if 1.0 default, take last.
+    c.ResolveConflictingActions(c => c.Last()); //bc 2 gets, swagger has issue (api is fine), uses default version if conflict.  if 2.0 is default, take last. if 1.0 default, take first.
 });                               
 
 var app = builder.Build();

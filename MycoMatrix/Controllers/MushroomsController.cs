@@ -8,8 +8,8 @@ using MycoMatrix.Models;
 namespace MycoMatrix.Controllers
 {
   [ApiController]
-  //[ApiVersion("1.0")]
-  [ApiVersion("2.0")]
+  [ApiVersion("1.0")]
+  //[ApiVersion("2.0")]
   [Route("api/v{version:apiVersion}/[controller]")]
 
   public class MushroomsController : ControllerBase
@@ -30,7 +30,6 @@ namespace MycoMatrix.Controllers
     [Range(0, 10)] int toxicityLevel,
     [Range(1, int.MaxValue)] int page = 1,
     [Range(1, 30)] int pageSize = 4)
-
     {
       if (!ModelState.IsValid)
       {
@@ -67,10 +66,10 @@ namespace MycoMatrix.Controllers
 
       return await query.Skip(pageSize * (page - 1)).Take(pageSize).ToListAsync();
     }
-    
-    [ApiVersion("1.0")]
-    [HttpGet] //V1 test.
-    public async Task<ActionResult<IEnumerable<Mushroom>>> GetV1(
+
+    [ApiVersion("2.0")]
+    [HttpGet] //V2 test.
+    public async Task<ActionResult<IEnumerable<Mushroom>>> GetV2(
         string editor,
         string commonName,
         string genus,
