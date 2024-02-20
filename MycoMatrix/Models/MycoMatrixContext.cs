@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace MycoMatrix.Models;
 
-public class MycoMatrixContext : DbContext
+public class MycoMatrixContext : IdentityDbContext<ApplicationUser>
 {
   public DbSet<Mushroom> Mushrooms { get; set; }
 
@@ -12,6 +15,13 @@ public class MycoMatrixContext : DbContext
 
   protected override void OnModelCreating(ModelBuilder builder)
     {
+      base.OnModelCreating(builder);
+
+      builder.Entity<IdentityUserLogin<string>>(e => 
+      {
+        e.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+      });
+
       builder.Entity<Mushroom>()
         .HasData(
           
