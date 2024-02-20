@@ -191,6 +191,17 @@ namespace MycoMatrix.Controllers
         return BadRequest(ModelState);
       }
     }
+
+    [HttpGet("/random")]
+    public async Task<ActionResult<Mushroom>> Random()
+    {
+      int count = _db.Mushrooms.Count();
+      int rnd = new Random().Next(count);
+      return await _db.Mushrooms.Skip(rnd).FirstAsync();
+      //(find randomush by id determined by rnd # 1-x of lenght of list..)
+      //Mushroom randoMush = await _db.Mushrooms.FindAsync(rnd);
+      //return randoMush?
+    }
   }
 
 }
