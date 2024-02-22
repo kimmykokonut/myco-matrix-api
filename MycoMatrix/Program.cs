@@ -100,6 +100,14 @@ builder.Services.AddSwaggerGen(c => //add versioning
 
 });
 
+builder.Services.AddCors(options => //enable cors
+{
+  options.AddPolicy("AllowOrigin", 
+  builder => builder.WithOrigins("http://localhost:7277")
+  .AllowAnyHeader()
+  .AllowAnyMethod());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -112,6 +120,8 @@ else
 {
     app.UseHttpsRedirection();
 }
+
+app.UseCors("AllowOrigin"); //allow Cors
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -149,7 +149,7 @@ namespace MycoMatrix.Controllers
       }
       if (editor != m.Editor)
       {
-        return Unauthorized();
+        // return Unauthorized();
       }
 
       _db.Mushrooms.Remove(m);
@@ -166,7 +166,7 @@ namespace MycoMatrix.Controllers
       }
       if (editor != m.Editor)
       {
-        return Unauthorized();
+        // return Unauthorized();
       }
       _db.Mushrooms.Update(m);
 
@@ -210,7 +210,7 @@ namespace MycoMatrix.Controllers
 
         if (editor != m.Editor)
         {
-          return Unauthorized();
+          // return Unauthorized();
         }
 
         patchDoc.ApplyTo(m, ModelState);
